@@ -1,0 +1,18 @@
+[project]
+name = "anki-client"
+version = "0.1.0"
+description = "AnkiConnect + Claude wrapper for Chinese flashcard workflows"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings[toml]>=2.0.0",
+    "openai>=1.0.0",
+    "rich>=13.0.0",
+    "mcp>=1.0.0",
+    "edge-tts>=7.2.8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
