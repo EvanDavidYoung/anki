@@ -53,7 +53,15 @@ _JSON_BLOCK = re.compile(r"```(?:json)?\s*([\s\S]*?)```")
 class CardGenerator(ABC):
     def __init__(self, llm: LLMClient | None = None, anki: AnkiClient | None = None):
         self._llm = llm or LLMClient()
-        self._anki = anki or AnkiClient()
+        # Constructed lazily so a generator can be built (and used with an
+        # explicit next_key) without AnkiConnect being reachable.
+        self._anki_client = anki
+
+    @property
+    def _anki(self) -> AnkiClient:
+        if self._anki_client is None:
+            self._anki_client = AnkiClient()
+        return self._anki_client
 
     @abstractmethod
     def _system_prompt(self) -> str: ...
@@ -65,8 +73,11 @@ class CardGenerator(ABC):
         self,
         item: ContentItem,
         context: GenerationContext | None = None,
+        next_key: int | None = None,
     ) -> list[BaseModel]:
-        next_key = self._anki.next_key()
+        """Generate cards. Pass ``next_key`` to skip the AnkiConnect lookup."""
+        if next_key is None:
+            next_key = self._anki.next_key()
         system = self._system_prompt()
         if context or item.priority_terms:
             system = self._augment_system(system, item, context)

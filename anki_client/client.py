@@ -47,6 +47,14 @@ class AnkiClient:
         """Return the ordered field names for a note type."""
         return self._request("modelFieldNames", modelName=note_type)
 
+    def note_type_templates(self, note_type: str) -> dict:
+        """Return {template_name: {"Front": ..., "Back": ...}} for a note type."""
+        return self._request("modelTemplates", modelName=note_type)
+
+    def note_type_styling(self, note_type: str) -> dict:
+        """Return {"css": ...} for a note type."""
+        return self._request("modelStyling", modelName=note_type)
+
     def find_notes(self, query: str) -> list[int]:
         return self._request("findNotes", query=query)
 
@@ -55,6 +63,20 @@ class AnkiClient:
 
     def find_cards(self, query: str) -> list[int]:
         return self._request("findCards", query=query)
+
+    def cards_info(self, card_ids: list[int]) -> list[dict]:
+        return self._request("cardsInfo", cards=card_ids)
+
+    def answer_cards(self, answers: list[dict]) -> list[bool]:
+        """Answer cards as real reviews.
+
+        Each answer is ``{"cardId": int, "ease": 1-4}``. AnkiConnect returns
+        False for any card that is not currently due, so callers must inspect
+        the per-card result rather than assuming success.
+        """
+        if not answers:
+            return []
+        return self._request("answerCards", answers=answers)
 
     # ------------------------------------------------------------------
     # Key auto-generation

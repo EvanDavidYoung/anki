@@ -103,3 +103,36 @@ You must create this note type in Anki before adding cards.
 | `update_note_fields` | Edit fields on a note by ID |
 | `add_tags` / `remove_tags` | Manage tags on a set of notes |
 | `suspend` / `unsuspend` | Suspend or unsuspend cards |
+
+## Web app: Chinese Vocab Quiz
+
+A browser UI over the same card pipeline: paste Chinese text → the model extracts a
+vocab list → preview/approve/edit each card → quiz yourself → study with a local
+scheduler → export to Anki.
+
+```bash
+uv sync
+cd frontend && npm install
+
+# terminal 1
+uv run uvicorn vocabapp.main:app --reload      # http://localhost:8000
+# terminal 2
+cd frontend && npm run dev                      # http://localhost:5173
+```
+
+For a single-process setup, `npm run build` and open http://localhost:8000 — FastAPI
+serves `frontend/dist` when it exists.
+
+State lives in `vocabapp.db` (SQLite, gitignored). Anki is optional: the app runs fully
+with Anki closed, and `.apkg` export always works. Live AnkiConnect export is the
+lossless path — a `.apkg` import creates its own copy of the `Chinese Learning Model`
+note type. Study answers are recorded locally and pushed to Anki as real reviews only
+when you press the button on the Anki tab; Anki only accepts an answer for a card that
+is currently due, so anything else stays queued for a later push.
+
+Cards default to the **QA** deck, per `CLAUDE.md`.
+
+```bash
+uv run pytest        # backend tests
+cd frontend && npm run build   # typechecks the frontend
+```

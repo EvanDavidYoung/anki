@@ -21,3 +21,12 @@ input/*
 !input/.gitkeep
 output/*
 !output/.gitkeep
+
+# Web app local database + node/vite build artifacts
+vocabapp.db
+vocabapp.db-*
+node_modules/
+frontend/dist/
+
+# TypeScript incremental build info
+frontend/tsconfig.tsbuildinfo
