@@ -12,7 +12,7 @@ def stub_llm(monkeypatch):
     monkeypatch.setattr(
         vocab, "_get_generator", lambda: ChineseCardGenerator(llm=StubLLM(VOCAB_JSON))
     )
-    monkeypatch.setattr(quiz_service, "LLMClient", lambda: StubLLM(QUIZ_JSON))
+    monkeypatch.setattr(quiz_service, "quiz_llm", lambda: StubLLM(QUIZ_JSON))
 
 
 @pytest.fixture(autouse=True)

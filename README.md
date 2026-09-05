@@ -132,6 +132,21 @@ is currently due, so anything else stays queued for a later push.
 
 Cards default to the **QA** deck, per `CLAUDE.md`.
 
+### Model configuration
+
+Vocab extraction and quiz writing resolve their provider separately. Quiz writing has to
+invent distractors that are wrong but plausible, which is much harder than extraction, so
+it can point at a stronger model — on a different provider if you like. Each `LLM_QUIZ_*`
+setting falls back to its `LLM_*` counterpart when left empty:
+
+| Setting | Purpose |
+| --- | --- |
+| `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL` | Everything, including vocab extraction |
+| `LLM_QUIZ_BASE_URL` / `LLM_QUIZ_API_KEY` / `LLM_QUIZ_MODEL` | Quiz writing only |
+
+`LLM_QUIZ_API_KEY` also accepts the name `OPEN_ROUTER_API_KEY`. Current setup: extraction
+on OpenAI `gpt-4o-mini`, quiz writing on OpenRouter `deepseek/deepseek-v4-flash`.
+
 ```bash
 uv run pytest        # backend tests
 cd frontend && npm run build   # typechecks the frontend

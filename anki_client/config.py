@@ -2,6 +2,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from pydantic import AliasChoices, Field
+
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -21,6 +23,20 @@ class Settings(BaseSettings):
     llm_base_url: str
     llm_api_key: str
     llm_model: str
+    # Quiz writing is far more error-prone than vocab extraction (it has to
+    # invent distractors that are wrong but plausible), so it can point at a
+    # different, stronger model - possibly on a different provider entirely.
+    # Each of these falls back to its llm_* counterpart when left empty.
+    llm_quiz_base_url: str = ""
+    # Also accepts OPEN_ROUTER_API_KEY, which is what an OpenRouter key is
+    # naturally called in .env.
+    llm_quiz_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices(
+            "llm_quiz_api_key", "open_router_api_key", "openrouter_api_key"
+        ),
+    )
+    llm_quiz_model: str = ""
     default_deck: str
     input_dir: Path = _PROJECT_ROOT / "input"
     output_dir: Path = _PROJECT_ROOT / "output"

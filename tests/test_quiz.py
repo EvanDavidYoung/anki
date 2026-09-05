@@ -70,3 +70,54 @@ def test_no_cards_raises():
 def test_malformed_llm_output_raises_cleanly(payload, match):
     with pytest.raises(QuizGenerationError, match=match):
         generate("passage", CARDS, n=2, llm=StubLLM(payload))
+
+
+def test_quiz_llm_falls_back_to_the_main_provider(monkeypatch):
+    """With no llm_quiz_* overrides, quiz writing uses the project default."""
+    import anki_client.llm_client as llm_module
+    from vocabapp.services.quiz import quiz_llm
+
+    captured = {}
+    monkeypatch.setattr(
+        llm_module.openai,
+        "OpenAI",
+        lambda base_url, api_key: captured.update(base_url=base_url, api_key=api_key),
+    )
+    settings = _settings(llm_quiz_model="", llm_quiz_base_url="", llm_quiz_api_key="")
+    monkeypatch.setattr("vocabapp.services.quiz.get_settings", lambda: settings)
+
+    assert quiz_llm()._model == "main-model"
+    assert captured == {"base_url": "https://main.example/v1", "api_key": "main-key"}
+
+
+def test_quiz_llm_can_point_at_a_different_provider(monkeypatch):
+    import anki_client.llm_client as llm_module
+    from vocabapp.services.quiz import quiz_llm
+
+    captured = {}
+    monkeypatch.setattr(
+        llm_module.openai,
+        "OpenAI",
+        lambda base_url, api_key: captured.update(base_url=base_url, api_key=api_key),
+    )
+    settings = _settings(
+        llm_quiz_base_url="https://quiz.example/v1",
+        llm_quiz_api_key="quiz-key",
+        llm_quiz_model="better-model",
+    )
+    monkeypatch.setattr("vocabapp.services.quiz.get_settings", lambda: settings)
+
+    assert quiz_llm()._model == "better-model"
+    assert captured == {"base_url": "https://quiz.example/v1", "api_key": "quiz-key"}
+
+
+def _settings(**overrides):
+    from anki_client.config import Settings
+
+    return Settings(
+        llm_base_url="https://main.example/v1",
+        llm_api_key="main-key",
+        llm_model="main-model",
+        default_deck="QA",
+        **overrides,
+    )

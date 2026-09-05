@@ -3,6 +3,7 @@
 import json
 import random
 
+from anki_client.config import get_settings
 from anki_client.generator import _extract_json
 from anki_client.llm_client import LLMClient
 
@@ -43,6 +44,17 @@ Schema for each element:
 
 class QuizGenerationError(RuntimeError):
     pass
+
+
+def quiz_llm() -> LLMClient:
+    """The model used for quiz writing, which may be a different provider."""
+    s = get_settings()
+    return LLMClient(
+        settings=s,
+        model=s.llm_quiz_model or None,
+        base_url=s.llm_quiz_base_url or None,
+        api_key=s.llm_quiz_api_key or None,
+    )
 
 
 def _build_user_message(source_text: str, cards: list[dict]) -> str:
@@ -96,7 +108,7 @@ def generate(
         raise QuizGenerationError("no cards to build a quiz from")
 
     n = max(1, min(n, len(cards) * 2))
-    client = llm or LLMClient()
+    client = llm or quiz_llm()
     raw = client.complete(
         system=QUIZ_SYSTEM_PROMPT.format(n=n),
         user=_build_user_message(source_text, cards),

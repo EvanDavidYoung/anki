@@ -4,10 +4,21 @@ from .config import Settings, get_settings
 
 
 class LLMClient:
-    def __init__(self, settings: Settings | None = None):
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        model: str | None = None,
+        base_url: str | None = None,
+        api_key: str | None = None,
+    ):
+        """Any of model/base_url/api_key may be overridden so a single caller
+        can talk to a different provider than the project default."""
         s = settings or get_settings()
-        self._client = openai.OpenAI(base_url=s.llm_base_url, api_key=s.llm_api_key)
-        self._model = s.llm_model
+        self._client = openai.OpenAI(
+            base_url=base_url or s.llm_base_url,
+            api_key=api_key or s.llm_api_key,
+        )
+        self._model = model or s.llm_model
 
     def complete(self, system: str, user: str) -> str:
         resp = self._client.chat.completions.create(
