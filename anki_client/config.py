@@ -33,16 +33,13 @@ class Settings(BaseSettings):
     message_db: Path = _PROJECT_ROOT / "input" / "messages.db"
     # How many text messages to pack into a single card-generation request.
     message_batch_size: int = 25
+    # Deck names. These are placeholder fallbacks -- set the real ones in
+    # config.toml or .env rather than editing them here.
     staging_deck: str = "Staging"
-    target_deck: str = "自己學中文"
-    cloze_deck: str = "自己學中文"  # post-MVP; defaults to target_deck
-    hsk_deck: str = "Mandarin HSK 1000-5000"
-    study_decks: list[str] = [
-        "自己學中文",
-        "自己學中文::MTC中文課",
-        "Evan Chinese Vocab",
-        "Mandarin HSK 1000-5000",
-    ]
+    target_deck: str = "Chinese"
+    cloze_deck: str = "Chinese"  # post-MVP; defaults to target_deck
+    hsk_deck: str = "Chinese::HSK"
+    study_decks: list[str] = ["Chinese"]
     vision_model: str = ""  # post-MVP; vision-capable model id for image OCR
 
     @classmethod
