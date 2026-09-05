@@ -151,3 +151,35 @@ on OpenAI `gpt-4o-mini`, quiz writing on OpenRouter `deepseek/deepseek-v4-flash`
 uv run pytest        # backend tests
 cd frontend && npm run build   # typechecks the frontend
 ```
+
+### Agent access (MCP)
+
+`vocabapp/mcp_server.py` exposes the review queue to agents over MCP as the
+`vocab-quiz` server. It is **stage-only**: an agent can create sessions, stage cards it
+selected itself, write quizzes and read progress, but approving, rejecting, exporting to
+Anki and pushing reviews stay in the web UI. That gate is the point of the app, so no
+tool here can bypass it.
+
+| Tool | Purpose |
+| --- | --- |
+| `create_vocab_session` | Mine a Chinese passage for vocab, staged as pending |
+| `stage_vocab_cards` | Stage cards the agent selected itself |
+| `list_vocab_sessions` / `get_vocab_session` | Read the queue and approval state |
+| `generate_quiz` | Write a multiple-choice quiz over a session |
+| `get_study_progress` | Due counts, quiz score, reviews awaiting push |
+
+Each response carries a `review_url` (`http://localhost:8000/?session=N`) that deep-links
+the human straight to that session's review queue.
+
+Set `VOCABAPP_DB_PATH` so the agent and the web UI share one queue when they're launched
+from different directories — every `AppSettings` field is overridable via a
+`VOCABAPP_`-prefixed environment variable.
+
+```jsonc
+// hermes config.yaml / any MCP client
+"vocab-quiz": {
+  "command": "/opt/homebrew/bin/uv",
+  "args": ["run", "--directory", "/path/to/Anki", "python", "-m", "vocabapp.mcp_server"],
+  "env": { "VOCABAPP_DB_PATH": "/path/to/Anki/vocabapp.db" }
+}
+```

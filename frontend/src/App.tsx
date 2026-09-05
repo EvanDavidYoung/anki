@@ -34,6 +34,19 @@ export default function App() {
   useEffect(() => {
     refreshSessions().catch(() => undefined);
     api.ankiStatus().then(setAnki).catch(() => undefined);
+
+    // ?session=N deep-links straight to a review queue, which is how agents
+    // (and the MCP server) hand a staged session off to a human.
+    const wanted = Number(new URLSearchParams(window.location.search).get("session"));
+    if (wanted) {
+      api
+        .getSession(wanted)
+        .then((detail) => {
+          setSession(detail);
+          setTab("cards");
+        })
+        .catch(() => undefined);
+    }
   }, [refreshSessions]);
 
   const onCreated = async (detail: SessionDetail) => {
