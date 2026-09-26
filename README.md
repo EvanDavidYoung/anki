@@ -39,11 +39,18 @@ LLM_API_KEY=sk-...
 LLM_MODEL=gpt-4o
 ```
 
-Set your default deck in `config.toml`:
+Set the deck names for your own collection in `config.toml`:
 
 ```toml
 default_deck = "My Chinese Deck"
+staging_deck = "Staging"
+target_deck  = "My Chinese Deck"
+hsk_deck     = "My Chinese Deck::HSK"
+study_decks  = ["My Chinese Deck"]
 ```
+
+Anything set in `.env` overrides `config.toml`, so you can keep the checked-in
+file generic and put your personal deck names in `.env`.
 
 ### Running the MCP server
 
@@ -67,7 +74,7 @@ anki_client/
   sources/        # Content source adapters (files, RSS, etc.)
 input/            # Drop source files here for batch processing
 output/           # Generated card exports
-config.toml       # Default deck and other non-secret config
+config.toml       # Deck names and other non-secret config
 ```
 
 ## Note type
@@ -183,3 +190,7 @@ from different directories — every `AppSettings` field is overridable via a
   "env": { "VOCABAPP_DB_PATH": "/path/to/Anki/vocabapp.db" }
 }
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).

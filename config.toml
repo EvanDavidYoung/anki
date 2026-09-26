@@ -1,1 +1,23 @@
-default_deck = "Evan Chinese Vocab April 27"
+# Deck names used by the library.
+#
+# Any of these can be overridden in .env (e.g. DEFAULT_DECK="My Deck");
+# .env takes precedence over this file. Replace the placeholders below with
+# the deck names from your own collection.
+
+# Deck new cards are added to by default.
+default_deck = "Chinese"
+
+# Generated cards land here for review before being approved.
+staging_deck = "Staging"
+
+# Deck approved cards are moved into.
+target_deck = "Chinese"
+
+# Deck for cloze cards; usually the same as target_deck.
+cloze_deck = "Chinese"
+
+# Deck of HSK-tagged vocabulary, used to estimate the learner's level.
+hsk_deck = "Chinese::HSK"
+
+# Decks scanned to build the learner's "known words" set.
+study_decks = ["Chinese"]

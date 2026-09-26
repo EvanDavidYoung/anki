@@ -15,7 +15,7 @@ from .base import (
 _MESSAGE = re.compile(r"^- \*\*(?P<user>.+?)\*\* \[(?P<time>[\d:]+)\]:\s*(?P<text>.*)$")
 # Markdown image: ![alt](url)
 _IMAGE = re.compile(r"!\[(?P<alt>[^\]]*)\]\((?P<url>[^)]+)\)")
-# Bold/emphasis spans Evan uses to flag a word: **word** or *word*
+# Bold/emphasis spans the user adds to flag a word: **word** or *word*
 _EMPHASIS = re.compile(r"\*\*([^*\n]+)\*\*|\*([^*\n]+)\*")
 # Frontmatter key: value lines
 _FRONTMATTER = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
@@ -45,7 +45,7 @@ class SlackExportSource:
     ``fetch_messages`` emits one :class:`Message` per bullet — the unit the
     message store and the message-batched generator work with. Each message is
     classified ``text`` / ``text+image`` / ``image-only`` and carries the words
-    Evan flagged with *…* / **…** as ``priority_terms`` plus any referenced
+    the user flagged with *…* / **…** as ``priority_terms`` plus any referenced
     images. The file is left in place — the staging service moves it to
     ``processed/`` once parsed.
 

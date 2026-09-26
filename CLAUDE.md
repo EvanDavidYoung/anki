@@ -1,9 +1,5 @@
 # Anki Project
 
-## Plan
-
-Full implementation plan: `~/.claude/plans/explore-a-plan-that-majestic-whistle.md`
-
 ## Summary
 
 A `uv`-managed Python library (`anki_client`) that wraps AnkiConnect and Claude to support common Anki workflows: card generation from content sources (local files, RSS feeds), learning progress stats, and editing existing cards. An MCP server built on top exposes the same functionality conversationally in Claude sessions.
